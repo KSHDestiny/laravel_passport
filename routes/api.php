@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PassportAuthController;
 use App\Http\Controllers\API\EmployeeApiController;
 
 /*
@@ -19,4 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('employee',EmployeeApiController::class);
+Route::post('register', [PassportAuthController::class, 'register']);
+Route::post('login', [PassportAuthController::class, 'login']);
+Route::middleware('auth:api')->group(function () {
+    Route::resource('employee',EmployeeApiController::class);
+});

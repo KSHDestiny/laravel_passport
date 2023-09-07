@@ -19,12 +19,7 @@ class EmployeeApiController extends Controller
         $this->employeeValidation($request);
 
         $employee = new Employee();
-        $employee->name = $request->name;
-        $employee->email = $request->email;
-        $employee->age = $request->age;
-        $employee->phone = $request->phone;
-        $employee->address = $request->address;
-        $employee->position = $request->position;
+        $this->dataInserting($employee, $request);
         $employee->created_at = Carbon::now();
         $employee->save();
 
@@ -39,12 +34,7 @@ class EmployeeApiController extends Controller
         $this->employeeValidation($request);
 
         $employee = Employee::find($id);
-        $employee->name = $request->name;
-        $employee->email = $request->email;
-        $employee->age = $request->age;
-        $employee->phone = $request->phone;
-        $employee->address = $request->address;
-        $employee->position = $request->position;
+        $this->dataInserting($employee, $request);
         $employee->updated_at = Carbon::now();
         $employee->save();
 
@@ -76,5 +66,14 @@ class EmployeeApiController extends Controller
             'age.min' => "An applicant is not old enough to be employee.",
             'age.max' => "An applicant's age exceeds our limitation."
         ]);
+    }
+
+    private function dataInserting($employee, $request){
+        $employee->name = $request->name;
+        $employee->email = $request->email;
+        $employee->age = $request->age;
+        $employee->phone = $request->phone;
+        $employee->address = $request->address;
+        $employee->position = $request->position;
     }
 }
