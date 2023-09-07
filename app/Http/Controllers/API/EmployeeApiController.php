@@ -16,7 +16,7 @@ class EmployeeApiController extends Controller
 
     public function store(Request $request)
     {
-        $this->employeeValidation($request);
+        $this->dataValidation($request, null);
 
         $employee = new Employee();
         $this->dataInserting($employee, $request);
@@ -25,13 +25,13 @@ class EmployeeApiController extends Controller
 
         return response()->json([
             "status" => "success",
-            "message" => 'One Employee is created.'
+            "message" => "One Employee is created."
         ]);
     }
 
     public function update(Request $request, string $id)
     {
-        $this->employeeValidation($request);
+        $this->dataValidation($request, $id);
 
         $employee = Employee::find($id);
         $this->dataInserting($employee, $request);
@@ -40,7 +40,7 @@ class EmployeeApiController extends Controller
 
         return response()->json([
             "status" => "success",
-            "message" => 'One Employee is updated.'
+            "message" => "One Employee is updated."
         ]);
     }
 
@@ -50,21 +50,21 @@ class EmployeeApiController extends Controller
         $employee->destroy();
         return response()->json([
             "status" => "success",
-            "message" => 'One Employee is deleted.'
+            "message" => "One Employee is deleted."
         ]);
     }
 
-    private function employeeValidation($request){
+    private function dataValidation($request, $id){
         $request->validate([
-            'name' => 'required|max:50',
-            'email'=> 'required|email',
-            'age' => 'required|integer|min:16|max:60',
-            'phone' => 'required',
-            'address' => 'required',
-            'position' => 'required'
+            "name" => "required|max:50",
+            "email"=> "required|email|unique:employees,email,{$id}",
+            "age" => "required|integer|min:16|max:60",
+            "phone" => "required",
+            "address" => "required",
+            "position" => "required"
         ],[
-            'age.min' => "An applicant is not old enough to be employee.",
-            'age.max' => "An applicant's age exceeds our limitation."
+            "age.min" => "An applicant is not old enough to be employee.",
+            "age.max" => "An applicant's age exceeds our limitation."
         ]);
     }
 

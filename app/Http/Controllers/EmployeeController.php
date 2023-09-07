@@ -27,7 +27,7 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-        $this->employeeValidation($request, null);
+        $this->dataValidation($request, null);
 
         $employee = new Employee();
         $this->dataInserting($employee, $request);
@@ -46,7 +46,7 @@ class EmployeeController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $this->employeeValidation($request, $id);
+        $this->dataValidation($request, $id);
 
         $employee = Employee::find($id);
         $this->dataInserting($employee, $request);
@@ -68,7 +68,7 @@ class EmployeeController extends Controller
         ]);
     }
 
-    private function employeeValidation($request, $id){
+    private function dataValidation($request, $id){
         $request->validate([
             "name" => "required|max:50",
             "email"=> "required|email|unique:employees,email,{$id}",
