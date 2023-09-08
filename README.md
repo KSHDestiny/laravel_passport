@@ -24,4 +24,5 @@
 
 ### To Login
 > email : admin@gmail.com, password : password
+> 
 > email : destiny@gmail.com, password : password
