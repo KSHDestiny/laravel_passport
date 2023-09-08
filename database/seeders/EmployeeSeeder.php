@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -24,7 +25,7 @@ class EmployeeSeeder extends Seeder
                 'phone' => $item->phone,
                 'address' => $item->address,
                 'position' => $item->position,
-                'created_at' => $item->created_at
+                'created_at' => Carbon::now()
             ]);
         }
     }

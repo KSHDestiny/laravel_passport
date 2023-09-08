@@ -10,7 +10,7 @@
  - git clone https://github.com/KSHDestiny/laravel_passport.git
  - code Laravel_Passport
 
-**Project Setup**
+**Project Setup:**
 
 *terminal*
  - npm install
@@ -20,8 +20,8 @@
  - php artisan passport:install
  - php artisan migrate:fresh --seed
  - php artisan serve
+ - npm run dev
 
 ### To Login
-> name : admin, password : password
-
-> name : destiny, password : password
+> email : admin@gmail.com, password : password
+> email : destiny@gmail.com, password : password
