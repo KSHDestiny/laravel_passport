@@ -49,11 +49,6 @@
 @endsection
 
 @section('script')
-$(document).on('click','#deleteBtn',function(e){
-    e.preventDefault();
-    let id = $(this).data('id');
-
-})
 
 function destroy(id){
     Swal.fire({

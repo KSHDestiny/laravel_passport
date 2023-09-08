@@ -23,7 +23,8 @@ class EmployeeSeeder extends Seeder
                 'age' => $item->age,
                 'phone' => $item->phone,
                 'address' => $item->address,
-                'position' => $item->position
+                'position' => $item->position,
+                'created_at' => $item->created_at
             ]);
         }
     }
