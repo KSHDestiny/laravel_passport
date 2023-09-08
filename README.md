@@ -17,8 +17,8 @@
  - composer update
  - cp .env.example .env
  - php artisan key:generate
- - php artisan passport:install
  - php artisan migrate:fresh --seed
+ - php artisan passport:install
  - php artisan serve
  - npm run dev
 
