@@ -17,6 +17,8 @@ class EmployeeApiController extends Controller
 
     public function store(Request $request)
     {
+        $employee = new Employee();
+
         $data = $this->data($request);
 
         $validator = $this->dataValidation($data, null);
@@ -28,7 +30,9 @@ class EmployeeApiController extends Controller
         }
         $validator->validated();
 
-        Employee::create($data);
+        $this->dataInserting($employee, $request);
+        $employee->created_at = Carbon::now();
+        $employee->save();
 
         return response()->json([
             "status" => "success",
@@ -38,6 +42,14 @@ class EmployeeApiController extends Controller
 
     public function updateData(Request $request, string $id)
     {
+        $employee = Employee::find($id);
+
+        if(empty($employee)){
+            return response()->json([
+                "status" => "fail",
+                "message" => "There is no data in id:{$id}."
+            ]);
+        }
 
         $data = $this->data($request);
 
@@ -50,7 +62,9 @@ class EmployeeApiController extends Controller
         }
         $validator->validated();
 
-        Employee::where('id',$id)->update($data);
+        $this->dataInserting($employee, $request);
+        $employee->updated_at = Carbon::now();
+        $employee->save();
 
         return response()->json([
             "status" => "success",
@@ -61,6 +75,12 @@ class EmployeeApiController extends Controller
     public function destroy(string $id)
     {
         $employee = Employee::find($id);
+        if(empty($employee)){
+            return response()->json([
+                "status" => "fail",
+                "message" => "There is no data in id:{$id}."
+            ]);
+        }
         $employee->delete();
         return response()->json([
             "status" => "success",
@@ -89,5 +109,14 @@ class EmployeeApiController extends Controller
             "position" => "required"
         ]);
 
+    }
+
+    private function dataInserting($employee, $request){
+        $employee->name = $request->name;
+        $employee->email = $request->email;
+        $employee->age = $request->age;
+        $employee->phone = $request->phone;
+        $employee->address = $request->address;
+        $employee->position = $request->position;
     }
 }
