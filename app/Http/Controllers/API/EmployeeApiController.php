@@ -30,17 +30,8 @@ class EmployeeApiController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $id)
+    public function updateData(Request $request, string $id)
     {
-        // $data = [
-        //     'name' => "Moe Moe",
-        //     'email' => "moemoe@gmail.com",
-        //     'age' => 23,
-        //     'phone' => "091234567332",
-        //     'address' => "Yangon",
-        //     'position' => "Junior Developer",
-        // ];
-
         $data = [
             'name' => $request->name,
             'email' => $request->email,
@@ -51,7 +42,7 @@ class EmployeeApiController extends Controller
         ];
 
 
-        Validator($data,[
+        $validator = Validator::make($data,[
             "name" => "required|max:50",
             "email"=> "required|email|unique:employees,email,{$id}",
             "age" => "required|integer|min:16|max:60",
@@ -59,6 +50,15 @@ class EmployeeApiController extends Controller
             "address" => "required",
             "position" => "required"
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => "fail",
+                "message" => "Something went wrong"
+            ]);
+        }
+
+        $validator->validated();
 
         Employee::where('id',$id)->update($data);
 

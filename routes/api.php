@@ -23,5 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('register', [PassportAuthController::class, 'register']);
 Route::post('login', [PassportAuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
+    Route::post('employee/{id}',[EmployeeApiController::class,'updateData']);
     Route::resource('employee',EmployeeApiController::class);
 });
