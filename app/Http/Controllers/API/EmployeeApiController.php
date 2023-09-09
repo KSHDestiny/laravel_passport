@@ -72,6 +72,37 @@ class EmployeeApiController extends Controller
         ]);
     }
 
+    public function update(Request $request, string $id){
+        $employee = Employee::find($id);
+
+        if(empty($employee)){
+            return response()->json([
+                "status" => "fail",
+                "message" => "There is no data in id:{$id}."
+            ]);
+        }
+
+        $data = $this->data($request);
+
+        $validator = $this->dataValidation($data, $id);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => "fail",
+                "message" => "Input data is invalid."
+            ]);
+        }
+        $validator->validated();
+
+        $this->dataInserting($employee, $request);
+        $employee->updated_at = Carbon::now();
+        $employee->save();
+
+        return response()->json([
+            "status" => "success",
+            "message" => "One Employee is updated."
+        ]);
+    }
+
     public function destroy(string $id)
     {
         $employee = Employee::find($id);
