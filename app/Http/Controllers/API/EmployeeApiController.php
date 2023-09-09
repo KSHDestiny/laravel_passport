@@ -17,12 +17,18 @@ class EmployeeApiController extends Controller
 
     public function store(Request $request)
     {
-        $this->dataValidation($request);
+        $data = $this->data($request);
 
-        $employee = new Employee();
-        $this->dataInserting($employee, $request);
-        $employee->created_at = Carbon::now();
-        $employee->save();
+        $validator = $this->dataValidation($data, null);
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => "fail",
+                "message" => "Input data is invalid."
+            ]);
+        }
+        $validator->validated();
+
+        Employee::create($data);
 
         return response()->json([
             "status" => "success",
@@ -32,32 +38,16 @@ class EmployeeApiController extends Controller
 
     public function updateData(Request $request, string $id)
     {
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'age' => $request->age,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'position' => $request->position,
-        ];
 
+        $data = $this->data($request);
 
-        $validator = Validator::make($data,[
-            "name" => "required|max:50",
-            "email"=> "required|email|unique:employees,email,{$id}",
-            "age" => "required|integer|min:16|max:60",
-            "phone" => "required",
-            "address" => "required",
-            "position" => "required"
-        ]);
-
+        $validator = $this->dataValidation($data, $id);
         if ($validator->fails()) {
             return response()->json([
                 "status" => "fail",
-                "message" => "Something went wrong"
+                "message" => "Input data is invalid."
             ]);
         }
-
         $validator->validated();
 
         Employee::where('id',$id)->update($data);
@@ -78,23 +68,26 @@ class EmployeeApiController extends Controller
         ]);
     }
 
-    private function dataValidation($request){
-        $request->validate([
+    private function data($request){
+        return [
+            'name' => $request->name,
+            'email' => $request->email,
+            'age' => $request->age,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'position' => $request->position,
+        ];
+    }
+
+    private function dataValidation($data, $id){
+        return Validator::make($data,[
             "name" => "required|max:50",
-            "email"=> "required|email|unique:employees,email",
-            "age" => "required|integer|min:16|max:60",
+            "email"=> "required|email|unique:employees,email,{$id}",
+            "age" => "required|integer|between:18,30",
             "phone" => "required",
             "address" => "required",
             "position" => "required"
         ]);
-    }
 
-    private function dataInserting($employee, $request){
-        $employee->name = $request->name;
-        $employee->email = $request->email;
-        $employee->age = $request->age;
-        $employee->phone = $request->phone;
-        $employee->address = $request->address;
-        $employee->position = $request->position;
     }
 }
