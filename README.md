@@ -23,6 +23,13 @@
  - npm run dev
 
 ### To Login
-> email : admin@gmail.com, password : password
-
+> email : admin@gmail.com, password : password  
 > email : destiny@gmail.com, password : password
+
+### For API Testing
+`http://127.0.0.1:8000/api/register` POST Method  
+`http://127.0.0.1:8000/api/login` POST Method  
+`http://localhost:8000/api/employee` GET Method  
+`http://localhost:8000/api/employee` POST Method  
+`http://localhost:8000/api/employee/6` POST Method
+`http://localhost:8000/api/employee/6` DELETE Method
