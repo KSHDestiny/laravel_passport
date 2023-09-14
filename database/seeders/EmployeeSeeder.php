@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -19,6 +20,7 @@ class EmployeeSeeder extends Seeder
         $data = json_decode($json);
         foreach($data as $item){
             DB::table('employees')->insert([
+                'user_id'=>User::get()->random()->id,
                 'name' => $item->name,
                 'email' => $item->email,
                 'age' => $item->age,

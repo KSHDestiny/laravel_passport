@@ -12,7 +12,7 @@ class EmployeeApiController extends Controller
 {
     public function index()
     {
-        return Employee::all();
+        return Employee::where('user_id',auth()->user()->id)->get();
     }
 
     public function store(Request $request)
@@ -23,10 +23,7 @@ class EmployeeApiController extends Controller
 
         $validator = $this->dataValidation($data, null);
         if ($validator->fails()) {
-            return response()->json([
-                "status" => "fail",
-                "message" => "Input data is invalid."
-            ]);
+            return response("Invalid data.",400);
         }
         $validator->validated();
 
@@ -34,93 +31,87 @@ class EmployeeApiController extends Controller
         $employee->created_at = Carbon::now();
         $employee->save();
 
-        return response()->json([
-            "status" => "success",
-            "message" => "One Employee is created."
-        ]);
+        return response("Successfully created.",200);
     }
 
     public function updateData(Request $request, string $id)
     {
         $employee = Employee::find($id);
 
+        // ! Empty Data
         if(empty($employee)){
-            return response()->json([
-                "status" => "fail",
-                "message" => "There is no data in id:{$id}."
-            ]);
+            return response("No data for id:{$id}", 400);
         }
 
-        $data = $this->data($request);
+        $status = filterEmployee(auth()->user()->id, $employee->user_id, "api");
+        if($status == "403"){
+            return response('Unauthorized User', 403);
+        }
 
+        // ! Validation
+        $data = $this->data($request);
         $validator = $this->dataValidation($data, $id);
         if ($validator->fails()) {
-            return response()->json([
-                "status" => "fail",
-                "message" => "Input data is invalid."
-            ]);
+            return response("Invalid data.",400);
         }
         $validator->validated();
 
+        // ! data Inserting
         $this->dataInserting($employee, $request);
         $employee->updated_at = Carbon::now();
         $employee->save();
 
-        return response()->json([
-            "status" => "success",
-            "message" => "One Employee is updated."
-        ]);
+        return response("Successfully updated.",200);
     }
 
-    public function update(Request $request, string $id){
+    public function update(Request $request, string $id)
+    {
         $employee = Employee::find($id);
-
-        if(empty($employee)){
-            return response()->json([
-                "status" => "fail",
-                "message" => "There is no data in id:{$id}."
-            ]);
+        $status = filterEmployee(auth()->user()->id, $employee->user_id, "api");
+        if($status == "403"){
+            return response('Unauthorized User', 403);
         }
 
-        $data = $this->data($request);
+        // ! Empty Data
+        if(empty($employee)){
+            return response("No data for id:{$id}", 400);
+        }
 
+        // ! Validation
+        $data = $this->data($request);
         $validator = $this->dataValidation($data, $id);
         if ($validator->fails()) {
-            return response()->json([
-                "status" => "fail",
-                "message" => "Input data is invalid."
-            ]);
+            return response("Invalid data.",400);
         }
         $validator->validated();
 
+        // ! data Inserting
         $this->dataInserting($employee, $request);
         $employee->updated_at = Carbon::now();
         $employee->save();
 
-        return response()->json([
-            "status" => "success",
-            "message" => "One Employee is updated."
-        ]);
+        return response("Successfully updated.",200);
     }
 
     public function destroy(string $id)
     {
         $employee = Employee::find($id);
         if(empty($employee)){
-            return response()->json([
-                "status" => "fail",
-                "message" => "There is no data in id:{$id}."
-            ]);
+            return response("No data for id:{$id}", 400);
         }
+
+        $status = filterEmployee(auth()->user()->id, $employee->user_id, "api");
+        if($status == "403"){
+            return response('Unauthorized User', 403);
+        }
+
         $employee->delete();
-        return response()->json([
-            "status" => "success",
-            "message" => "One Employee is deleted."
-        ]);
+        return response('Successfully deleted.', 200);
     }
 
     private function data($request){
         return [
+            'user_id' => auth()->user()->id,
             'name' => $request->name,
             'email' => $request->email,
             'age' => $request->age,
@@ -132,6 +123,7 @@ class EmployeeApiController extends Controller
 
     private function dataValidation($data, $id){
         return Validator::make($data,[
+            "user_id" => "required|exists:users,id",
             "name" => "required|max:50",
             "email"=> "required|email|unique:employees,email,{$id}",
             "age" => "required|integer|between:18,30",
@@ -143,6 +135,7 @@ class EmployeeApiController extends Controller
     }
 
     private function dataInserting($employee, $request){
+        $employee->user_id = auth()->user()->id;
         $employee->name = $request->name;
         $employee->email = $request->email;
         $employee->age = $request->age;

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
@@ -16,7 +17,7 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $employees = Employee::all();
+        $employees = Employee::where('user_id',auth()->user()->id)->get();
         return view("index",compact("employees"));
     }
 
@@ -41,14 +42,18 @@ class EmployeeController extends Controller
     public function edit(string $id)
     {
         $employee = Employee::find($id);
+        filterEmployee(auth()->user()->id, $employee->user_id, null);
+
         return view("create",compact("employee"));
     }
 
     public function update(Request $request, string $id)
     {
+        $employee = Employee::find($id);
+        filterEmployee(auth()->user()->id, $employee->user_id, null);
+
         $this->dataValidation($request, $id);
 
-        $employee = Employee::find($id);
         $this->dataInserting($employee, $request);
         $employee->updated_at = Carbon::now();
         $employee->save();
@@ -60,6 +65,8 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         $employee = Employee::find($id);
+        filterEmployee(auth()->user()->id, $employee->user_id, null);
+
         $employee->delete();
 
         return response()->json([
@@ -83,6 +90,7 @@ class EmployeeController extends Controller
     }
 
     private function dataInserting($employee, $request){
+        $employee->user_id = auth()->user()->id;
         $employee->name = $request->name;
         $employee->email = $request->email;
         $employee->age = $request->age;
