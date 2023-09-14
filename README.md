@@ -35,7 +35,7 @@
 `http://localhost:8000/api/employee/6` DELETE Method
 
 *Note*
-I added some feature assuming user as organization and with their employees. 
-Organization can only access to interact with their employees but not employees from other organization. 
-Unauthorized Organization to access employees from other organizations are blocked by 403 Forbidden. 
-If this feature is overdued to deadline (2 days), you can skip it and just check previous commit.
+ - I added some feature assuming user as organization and with their employees. 
+ - Organization can only access to interact with their employees but not employees from other organization. 
+ - Unauthorized Organization to access employees from other organizations are blocked by 403 Forbidden. 
+ - If this feature is overdued to deadline (2 days), you can skip it and just check previous commit.
